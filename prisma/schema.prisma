@@ -1,0 +1,182 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ApartmentStatus {
+  AVAILABLE
+  MAINTENANCE
+  OCCUPIED
+}
+
+enum ApartmentArea {
+  HA_NOI
+  HA_LONG
+}
+
+enum BookingStatus {
+  PENDING
+  HOLD
+  CONFIRMED
+  CANCELLED
+  EXPIRED
+}
+
+model User {
+  id               Int                @id @default(autoincrement())
+  name             String
+  email            String?            @unique
+  hashedPassword   String
+  role             Role               @default(USER)
+  phoneNumber      String?            @unique
+  avatar           String?
+  blogPosts        BlogPost[]         @relation("UserBlogPosts")
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  ApartmentBooking ApartmentBooking[]
+
+  @@map("users")
+}
+
+model BlogPost {
+  id        Int        @id @default(autoincrement())
+  title     String
+  slug      String
+  content   String
+  summary   String?
+  thumbnail String?
+  status    BlogStatus @default(DRAFT)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  author    User       @relation("UserBlogPosts", fields: [authorId], references: [id])
+  authorId  Int
+
+  @@map("blog_posts")
+}
+
+model Otp {
+  id        Int      @id @default(autoincrement())
+  otp       String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  email     String
+  verified  Boolean  @default(false)
+  atttempts Int      @default(0)
+}
+
+model ApartmentOwner {
+  id         Int         @id @default(autoincrement())
+  name       String
+  phone      String?
+  email      String?
+  address    String?
+  apartments Apartment[]
+
+  @@map("apartment_owners")
+}
+
+model Apartment {
+  id              Int              @id @default(autoincrement())
+  name            String
+  location        String?
+  ownerId         Int?
+  pricePerDay     Float?           @map("price_per_day")
+  pricePerMonth   Float?           @map("price_per_month")
+  discountPercent Int?             @map("discount_percent")
+  description     String?          @db.Text
+  maxAdults       Int?             @map("max_adults")
+  maxChildren     Int?             @map("max_children")
+  numRooms        Int?             @map("num_rooms")
+  status          ApartmentStatus?
+  area            ApartmentArea?
+  maxBed          Int?             @map("max_bed")
+  acreage         Float?
+  nameApartment   String?          @map("name_apartment")
+
+  owner            ApartmentOwner?    @relation(fields: [ownerId], references: [id])
+  images           ApartmentImage[]
+  Room             Room[]
+  ApartmentBooking ApartmentBooking[]
+
+  @@map("apartments")
+}
+
+model ApartmentImage {
+  id          Int       @id @default(autoincrement())
+  apartmentId Int
+  imageUrl    String?   @map("image_url") @db.VarChar(255)
+  isFeatured  Boolean?  @default(false) @map("is_featured")
+  apartment   Apartment @relation(fields: [apartmentId], references: [id])
+
+  @@map("apartment_images")
+}
+
+model Room {
+  id          Int     @id @default(autoincrement())
+  apartmentId Int
+  name        String? @db.VarChar(255)
+  description String? @db.Text
+  capacity    Int?
+  price       Float?
+  maxRooms    Int?    @map("max_rooms")
+  maxAdults   Int?    @map("max_adults")
+  maxChildren Int?    @map("max_children")
+  discount    Int?
+
+  apartment Apartment          @relation(fields: [apartmentId], references: [id])
+  images    RoomImage[]
+  bookings  ApartmentBooking[]
+
+  @@map("rooms")
+}
+
+model RoomImage {
+  id       Int     @id @default(autoincrement())
+  roomId   Int
+  imageUrl String? @map("image_url") @db.VarChar(255)
+  altText  String? @map("alt_text") @db.VarChar(255)
+
+  room Room @relation(fields: [roomId], references: [id])
+
+  @@map("room_images")
+}
+
+model ApartmentBooking {
+  id                  Int            @id @default(autoincrement())
+  userId              Int
+  apartmentId         Int
+  roomId              Int?
+  checkIn             DateTime?      @map("check_in")
+  checkOut            DateTime?      @map("check_out")
+  totalPrice          Float?         @map("total_price")
+  status              BookingStatus?
+  guestName           String?        @map("guest_name") @db.VarChar(255)
+  guestPhone          String?        @map("guest_phone") @db.VarChar(20)
+  guestEmail          String?        @map("guest_email") @db.VarChar(255)
+  guestIdentityNumber String?        @map("guest_identity_number") @db.VarChar(50)
+  guestBirthday       DateTime?      @map("guest_birthday")
+  guestNationality    String?        @map("guest_nationality") @db.VarChar(100)
+  createdAt           DateTime?      @default(now()) @map("created_at")
+
+  user      User      @relation(fields: [userId], references: [id])
+  apartment Apartment @relation(fields: [apartmentId], references: [id])
+  room      Room?     @relation(fields: [roomId], references: [id])
+
+  @@map("apartment_bookings")
+}
