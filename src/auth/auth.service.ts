@@ -69,19 +69,19 @@ export class AuthService {
     //   return token;
     // }
   }
-  // public async logout(userId: number) {
-  //   await this.prismaService.user.update({
-  //     where: { id: userId },
-  //     data: { hashRefreshToken: null },
-  //   });
-  // }
+  public async logout(userId: number) {
+    await this.prismaService.user.update({
+      where: { id: userId },
+      data: { hashRefreshTokens: null },
+    });
+  }
   // public async refreshTokens(rt: string) {
   //   try {
   //     const secret = this.configService.get<string>('JWT_REFRESH_TOKEN');
   //     const payload = await this.jwtService.verify(rt, { secret });
   //     const userId = payload.id;
   //     const user = await this.userService.getUserById(userId);
-  //     if (!user || !user.email || !user.hashRefreshToken)
+  //     if (!user || !user.email || !user.h)
   //       throw new ForbiddenError(ErrorCode.ACCESS_DENIED);
 
   //     const rtMatches = await compareData(rt, user.hashRefreshToken);
@@ -112,13 +112,13 @@ export class AuthService {
     ]);
     return { accessToken, refreshToken };
   }
-  // private async _updateRtHash(userId: number, rt: string) {
-  //   const hash = await hashData(rt);
-  //   await this.prismaService.user.update({
-  //     where: { id: userId },
-  //     data: {
-  //       hashRefreshToken: hash,
-  //     },
-  //   });
-  // }
+  private async _updateRtHash(userId: number, rt: string) {
+    const hash = await hashData(rt);
+    await this.prismaService.user.update({
+      where: { id: userId },
+      data: {
+        hashRefreshTokens: hash,
+      },
+    });
+  }
 }

@@ -25,16 +25,6 @@ export class AuthController {
     };
     return response;
   }
-  // public async registerByPhone(@Body() dto: RegisterByPhoneDto) {
-  //   const data = await this.authService.registerByPhone(dto);
-  //   // const response: StandardResponse = {
-  //   //   success: true,
-  //   //   code: HttpStatus.CREATED,
-  //   //   message: AppMessage.REGISTER_SUCCESS,
-  //   //   data,
-  //   // };
-  //   // return response;
-  // }
   @Post('login')
   public async login(@Body() dto: LoginDto) {
     const data = await this.authService.login(dto);
@@ -46,19 +36,9 @@ export class AuthController {
     };
     return response;
   }
-  // @UseGuards(AuthGuard)
-  // @Post('logout')
-  // public async logout(@User() user: RequestUser) {
-  //   await this.authService.logout(user.id);
-  //   const response: StandardResponse = {
-  //     success: true,
-  //     code: HttpStatus.OK,
-  //     message: AppMessage.LOGOUT_SUCCESS,
-  //   };
-  //   return response;
-  // }
-//   @Post('refresh')
-//   public async refreshTokens(@Body('refreshToken') rt: string) {
-//     return await this.authService.refreshTokens(rt);
-//   }
+  @UseGuards(AuthGuard)
+  @Post('logout')
+  public async logout(@User() user:RequestUser){
+    return await this.authService.logout(user.id);
+  }
 }

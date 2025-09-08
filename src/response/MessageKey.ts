@@ -9,7 +9,7 @@ const message_key = {
   ERR00039: "OTP is not correct",
   ERR00040:
     "Wrong email address or password. Please check your credentials and try again",
-  ERR00041: "Password is not in the correct format",
+  ERR00041: "Password is not in the correct",
   ERR00042: "Access denied",
   ERR00043: "Plan must not be duplicated",
   ERR00044:

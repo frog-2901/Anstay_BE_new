@@ -38,18 +38,28 @@ enum BookingStatus {
   EXPIRED
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
 model User {
-  id               Int                @id @default(autoincrement())
-  name             String
-  email            String?            @unique
-  hashedPassword   String
-  role             Role               @default(USER)
-  phoneNumber      String?            @unique
-  avatar           String?
-  blogPosts        BlogPost[]         @relation("UserBlogPosts")
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  ApartmentBooking ApartmentBooking[]
+  id                Int                @id @default(autoincrement())
+  name              String
+  email             String?            @unique
+  hashedPassword    String
+  role              Role               @default(USER)
+  phoneNumber       String?            @unique
+  avatar            String?
+  dateOfBirth       DateTime?
+  address           String?
+  gender            Gender?
+  hashRefreshTokens String?
+  blogPosts         BlogPost[]         @relation("UserBlogPosts")
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  ApartmentBooking  ApartmentBooking[]
 
   @@map("users")
 }

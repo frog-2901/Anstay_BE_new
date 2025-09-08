@@ -3,5 +3,5 @@ export interface StandardResponse {
   message: string;
   code: number;
   reason_code?: string;
-  data?: Object;
+  data?: Object | null;
 }

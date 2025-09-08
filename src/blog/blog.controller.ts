@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, ParseUUIDPipe, Post } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 
@@ -12,5 +12,9 @@ export class BlogController {
   @Get("")
   public async getAll(){
     return this.blogService.findAll()
+  }
+  @Get("/:id")
+  public async getById(@Param("id", ParseIntPipe) id: number){
+    return this.blogService.findById(id);
   }
 }

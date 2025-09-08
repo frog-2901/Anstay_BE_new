@@ -47,7 +47,7 @@ export class CloudinaryController {
       file.originalname,
       user.name,
     );
-    // await this.userService.updateUserAvatar(user.id, uploadResult.secure_url);
+    await this.userService.updateUserAvatar(user.id, uploadResult.secure_url);
     const response: StandardResponse = {
       success: true,
       code: HttpStatus.OK,

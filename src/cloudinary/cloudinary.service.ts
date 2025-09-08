@@ -12,7 +12,7 @@ export class CloudinaryService {
       api_secret: process.env.CLOUDINARY_API_SECRET,
     });
   }
-  async uploadFile(fileBuffer: Buffer, originalName: string, userName: string): Promise<UploadApiResponse> {
+  async uploadFile(fileBuffer: Buffer, originalName: string, userName?: string): Promise<UploadApiResponse> {
     return new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
@@ -24,7 +24,6 @@ export class CloudinaryService {
           return resolve(result);
         }
       );
-
       Readable.from(fileBuffer).pipe(stream);
     });
   }
